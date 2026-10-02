@@ -219,6 +219,8 @@ export function renderWaifu(w, opts = {}) {
   const outfit = (OUTFITS[outfitId] || OUTFITS.sailor)(P, u);
   const hstyle = w.hair;
   const bang = bangsPath(BANGS[hstyle.bangs] || BANGS.blunt);
+  const bangBack = bangsPath((BANGS[hstyle.bangs] || BANGS.blunt).map(([x, y, t]) => (t ? [x + (x > 200 ? -10 : 10), y + 7, 1] : [x + (x > 200 ? -6 : 6), y + 10, 0])));
+  const ahoge = hstyle.ahoge ? `<path d="M 198 72 C 190 40, 206 18, 232 22 C 246 24, 250 36, 242 42 C 238 32, 226 30, 218 36 C 210 44, 208 58, 210 72 Z" fill="url(#${u}hair)" stroke="${H.line}" stroke-width="1.6" stroke-linejoin="round"/>` : '';
 
   // ---- accessory layers ----
   const accLayer = { back: '', ears: '', face: '', front: '', headback: '' };
@@ -340,9 +342,11 @@ export function renderWaifu(w, opts = {}) {
       ${eyes}
       ${accLayer.face}
       ${locks}
+      <path d="${bangBack}" fill="${H.dark}" stroke="${H.line}" stroke-width="1.4" stroke-linejoin="round"/>
       <path d="${bang}" fill="url(#${u}hair)" stroke="${H.line}" stroke-width="1.8" stroke-linejoin="round"/>
       <g clip-path="url(#${u}bangclip)">${strands}${shine}</g>
       ${ties}
+      ${ahoge}
       ${brows}
       ${accLayer.front}
       ${outfit.head || ''}
