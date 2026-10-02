@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Waifu preview</title>
+<style>
+body{margin:0;background:#1b1230;font-family:sans-serif;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(var(--cols,6),1fr);gap:8px;padding:8px}
+.cell{background:radial-gradient(circle at 50% 40%,#4a2c6e,#1b1230);border-radius:12px;padding:4px;text-align:center;font-size:12px}
+.cell svg{width:100%;height:auto;display:block}
+</style></head>
+<body><div class="grid" id="g"></div>
+<script type="module">
+import { renderWaifu, EXPRESSIONS } from '../js/waifu/render.js';
+import { WAIFUS, WAIFU_BY_ID, OUTFIT_LIST, ACCESSORY_LIST } from '../js/waifu/data.js';
+const q = new URLSearchParams(location.search);
+const mode = q.get('mode') || 'all';
+const g = document.getElementById('g');
+let items = [];
+if (mode === 'all') items = WAIFUS.map(w => [w, {}, w.name]);
+if (mode === 'expr') { const w = WAIFU_BY_ID[q.get('id') || 'hana']; items = Object.keys(EXPRESSIONS).map(e => [w, { expr: e }, e]); }
+if (mode === 'outfit') { const w = WAIFU_BY_ID[q.get('id') || 'hana']; items = OUTFIT_LIST.map(o => [w, { outfit: o.id }, o.id]); }
+if (mode === 'acc') { const w = WAIFU_BY_ID[q.get('id') || 'mio']; items = ACCESSORY_LIST.map(o => [w, { acc: o.id }, o.id]); }
+if (mode === 'one') { const w = WAIFU_BY_ID[q.get('id') || 'hana']; items = [[w, { expr: q.get('expr') || 'neutral' }, w.name]]; document.body.style.setProperty('--cols', 1); }
+if (q.get('cols')) document.body.style.setProperty('--cols', q.get('cols'));
+g.innerHTML = items.map(([w, o, label]) => `<div class="cell">${renderWaifu(w, { ...o, anim: false })}<div>${label}</div></div>`).join('');
+document.title = 'ready';
+</script></body></html>
